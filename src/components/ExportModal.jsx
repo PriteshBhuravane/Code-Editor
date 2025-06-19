@@ -13,7 +13,8 @@ import {
   TabsTrigger,
 } from "../components/ui/tabs";
 import { Textarea } from "../components/ui/textarea";
-import { Download, Link, Code, Copy } from "lucide-react";
+import { Download, Link, Code, Copy, Check } from "lucide-react";
+
 import { useToast } from "../hooks/use-toast";
 import {
   generateShareableLink,
@@ -32,17 +33,35 @@ const ExportModal = ({
   const [shareableLink, setShareableLink] = useState("");
   const [embedCode, setEmbedCode] = useState("");
   const { toast } = useToast();
+  const [copied, setCopied] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
-  const handleGenerateLink = () => {
-    const link = generateShareableLink(htmlCode, cssCode, jsCode);
-    setShareableLink(link);
+  const handleGenerateLink = async () => {
+    setIsGenerating(true);
+    try {
+      const link = await generateShareableLink(htmlCode, cssCode, jsCode);
+      setShareableLink(link);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const handleGenerateEmbed = () => {
-    const embed = generateEmbedCode(htmlCode, cssCode, jsCode);
-    setEmbedCode(embed);
+    try {
+      const embed = generateEmbedCode(htmlCode, cssCode, jsCode);
+      setEmbedCode(embed);
+      toast({
+        title: "Embed Code Generated",
+        description: "Embed code created successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to generate embed code",
+        variant: "destructive",
+      });
+    }
   };
-
   const handleDownload = async () => {
     try {
       await downloadProject(htmlCode, cssCode, jsCode);
@@ -61,6 +80,8 @@ const ExportModal = ({
 
   const copyToClipboard = (text, type) => {
     navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
     toast({
       title: "Copied!",
       description: `${type} copied to clipboard.`,
@@ -161,30 +182,37 @@ const ExportModal = ({
               </Button>
               {shareableLink && (
                 <div className="space-y-2">
-                  <Textarea
-                    value={shareableLink}
-                    readOnly
-                    className={`resize-none w-full overflow-x-auto break-words ${
-                      isDarkMode
-                        ? "bg-gray-800 border-gray-600 text-gray-300"
-                        : "bg-gray-50 border-gray-300 text-gray-700"
-                    }`}
-                    rows={3}
-                  />
-
-                  <Button
-                    onClick={() => copyToClipboard(shareableLink, "Share link")}
-                    variant="outline"
-                    size="sm"
-                    className={`${
-                      isDarkMode
-                        ? "border-gray-600 text-gray-300 hover:bg-gray-800"
-                        : "border-gray-300 text-gray-700 hover:bg-gray-50"
-                    }`}
+                  <div
+                    className={`relative ${
+                      isDarkMode ? "bg-gray-800" : "bg-gray-50"
+                    } rounded-md border ${
+                      isDarkMode ? "border-gray-600" : "border-gray-300"
+                    } p-2 overflow-hidden`}
                   >
-                    <Copy className="w-4 h-4 mr-2" />
-                    Copy Link
-                  </Button>
+                    <div className="max-h-[72px] overflow-y-auto">
+                      <div className="font-mono text-sm whitespace-pre-wrap break-all">
+                        {shareableLink.split("?")[0]}
+                        <span className="text-blue-500">?code=</span>
+                        <div className="inline-block">
+                          {shareableLink.split("?code=")[1]}
+                        </div>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() =>
+                        copyToClipboard(shareableLink, "Share link")
+                      }
+                      size="sm"
+                      className="absolute top-2 right-2 h-8 w-8 p-0"
+                      variant="ghost"
+                    >
+                      {copied ? (
+                        <Check className="w-4 h-4 text-green-500" />
+                      ) : (
+                        <Copy className="w-4 h-4" />
+                      )}
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
@@ -209,29 +237,34 @@ const ExportModal = ({
                 Generate Embed Code
               </Button>
               {embedCode && (
-                <div className="space-y-2">
-                  <Textarea
-                    value={embedCode}
-                    readOnly
-                    className={`resize-none ${
-                      isDarkMode
-                        ? "bg-gray-800 border-gray-600 text-gray-300"
-                        : "bg-gray-50 border-gray-300 text-gray-700"
-                    }`}
-                    rows={3}
-                  />
+                <div className="relative rounded-md border p-2 overflow-hidden">
+                  <div className="max-h-[72px] overflow-y-auto">
+                    <div className="font-mono text-sm whitespace-pre-wrap break-all">
+                      {embedCode.split('src="')[0]}
+                      <span className="text-blue-500">src="</span>
+                      <span className="inline-block">
+                        {embedCode.split('src="')[1]?.split('"')[0]}
+                      </span>
+                      {embedCode.split('src="')[1]
+                        ? embedCode
+                            .split('src="')[1]
+                            .split('"')
+                            .slice(1)
+                            .join('"')
+                        : ""}
+                    </div>
+                  </div>
                   <Button
                     onClick={() => copyToClipboard(embedCode, "Embed code")}
-                    variant="outline"
                     size="sm"
-                    className={`${
-                      isDarkMode
-                        ? "border-gray-600 text-gray-300 hover:bg-gray-800"
-                        : "border-gray-300 text-gray-700 hover:bg-gray-50"
-                    }`}
+                    className="absolute top-2 right-2 h-8 w-8 p-0"
+                    variant="ghost"
                   >
-                    <Copy className="w-4 h-4 mr-2" />
-                    Copy Code
+                    {copied ? (
+                        <Check className="w-4 h-4 text-green-500" />
+                      ) : (
+                        <Copy className="w-4 h-4" />
+                      )}
                   </Button>
                 </div>
               )}

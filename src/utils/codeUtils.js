@@ -1,81 +1,76 @@
-import prettier from 'prettier/standalone';
-import parserHtml from 'prettier/parser-html';
-import parserCss from 'prettier/parser-postcss';
-import parserBabel from 'prettier/parser-babel';
-import JSZip from 'jszip';
+// Add type declarations for CDN-loaded globals
+const { prettier, prettierPlugins, JSZip } = window;
 
-export const formatCode = async (code, language) => {
+export const formatCode = (code, language) => {
   try {
-    if (typeof code !== 'string') {
-      console.warn('formatCode received non-string value:', code);
-      return String(code || '');
-    }
+    if (!code || typeof code !== 'string') return code || '';
+    
+    const baseOptions = {
+      tabWidth: 2,
+      useTabs: false,
+      printWidth: 80,
+      plugins: [
+        prettierPlugins.html,
+        prettierPlugins.postcss,
+        prettierPlugins.babel
+      ]
+    };
 
-    switch (language) {
-      case 'html':
-        return await prettier.format(code, {
-          parser: 'html',
-          plugins: [parserHtml],
-          tabWidth: 2,
-          useTabs: false,
-          printWidth: 80,
-        });
-      case 'css':
-        return await prettier.format(code, {
-          parser: 'css',
-          plugins: [parserCss],
-          tabWidth: 2,
-          useTabs: false,
-          printWidth: 80,
-        });
-      case 'javascript':
-        return await prettier.format(code, {
-          parser: 'babel',
-          plugins: [parserBabel],
-          tabWidth: 2,
-          useTabs: false,
-          printWidth: 80,
-          semi: true,
-          singleQuote: true,
-        });
-      default:
-        return code;
-    }
+    const options = {
+      ...baseOptions,
+      ...(language === 'javascript' ? {
+        semi: true,
+        singleQuote: true
+      } : {})
+    };
+
+    return prettier.format(code, {
+      ...options,
+      parser: language === 'javascript' ? 'babel' : language
+    });
+    
   } catch (error) {
-    console.error('Formatting error:', error);
+    console.error(`Error formatting ${language}:`, error);
     return code;
   }
 };
 
-export const generateShareableLink = (htmlCode, cssCode, jsCode) => {
-  const codeData = {
-    html: htmlCode,
-    css: cssCode,
-    js: jsCode,
-  };
-  const encodedData = btoa(JSON.stringify(codeData));
-  return `${window.location.origin}?code=${encodedData}`;
-};
-
-export const generateEmbedCode = (htmlCode, cssCode, jsCode) => {
-  const shareableLink = generateShareableLink(htmlCode, cssCode, jsCode);
-  return `<iframe src="${shareableLink}" width="100%" height="500" frameborder="0"></iframe>`;
-};
-
 export const downloadProject = async (htmlCode, cssCode, jsCode) => {
   const zip = new JSZip();
-
   zip.file('index.html', htmlCode);
   zip.file('styles.css', cssCode);
   zip.file('script.js', jsCode);
-
+  
   const content = await zip.generateAsync({ type: 'blob' });
   const url = URL.createObjectURL(content);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'code-editor-project.zip';
-  document.body.appendChild(a);
+  a.download = 'project.zip';
   a.click();
-  document.body.removeChild(a);
   URL.revokeObjectURL(url);
+};
+export const generateShareableLink = (htmlCode, cssCode, jsCode) => {
+  try {
+    const codeData = {
+      html: htmlCode,
+      css: cssCode,
+      js: jsCode
+    };
+    // Compress the data more efficiently
+    const encodedData = btoa(encodeURIComponent(JSON.stringify(codeData)));
+    return `${window.location.origin}?code=${encodedData}`;
+  } catch (error) {
+    console.error("Error generating shareable link:", error);
+    return "Error generating link";
+  }
+};
+
+export const generateEmbedCode = (htmlCode, cssCode, jsCode) => {
+  try {
+    const shareableLink = generateShareableLink(htmlCode, cssCode, jsCode);
+    return `<iframe src="${shareableLink}" width="100%" height="500" frameborder="0" allowfullscreen></iframe>`;
+  } catch (error) {
+    console.error("Error generating embed code:", error);
+    return "Error generating embed code";
+  }
 };
