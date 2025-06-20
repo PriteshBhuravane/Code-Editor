@@ -1,12 +1,165 @@
-# React + Vite
+# Code Editor
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A web-based code editor built with React and Vite. This project allows you to write, format, preview, and export HTML, CSS, and JavaScript code. Features include live preview, code formatting with Prettier, project export as ZIP, shareable links, and template selection.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Live editing and preview of HTML, CSS, and JavaScript
+- Code formatting using Prettier
+- Export project as a ZIP file
+- Generate shareable links and embed codes
+- Multiple starter templates
+- Responsive and dark mode support
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Prerequisites
+
+- Node.js (v16 or higher recommended)
+- npm
+
+### Installation
+
+1. Clone the repository:
+   ```sh
+   git clone <repository-url>
+   cd "Code Editor"
+   ```
+
+2. Install dependencies:
+   ```sh
+   npm install
+   ```
+
+### Running the Development Server
+
+```sh
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) in your browser to view the app.
+
+### Building for Production
+
+```sh
+npm run build
+```
+
+### Preview Production Build
+
+```sh
+npm run preview
+```
+
+## Project Structure
+
+```
+Code Editor/
+  ├── public/
+  ├── src/
+  │   ├── components/
+  │   ├── hooks/
+  │   ├── lib/
+  │   ├── pages/
+  │   ├── utils/
+  │   ├── App.jsx
+  │   ├── main.jsx
+  │   └── ...
+  ├── index.html
+  ├── package.json
+  └── ...
+```
+
+## Technologies Used
+
+- [React](https://react.dev/)
+- [Vite](https://vitejs.dev/)
+- [Prettier](https://prettier.io/) (via CDN)
+- [JSZip](https://stuk.github.io/jszip/) (via CDN)
+- [Radix UI](https://www.radix-ui.com/) components
+
+## License
+
+MIT
+
+---
+```// filepath: /Users/priteshbhuravane/code editor/Code Editor/README.md
+# Code Editor
+
+A web-based code editor built with React and Vite. This project allows you to write, format, preview, and export HTML, CSS, and JavaScript code. Features include live preview, code formatting with Prettier, project export as ZIP, shareable links, and template selection.
+
+## Features
+
+- Live editing and preview of HTML, CSS, and JavaScript
+- Code formatting using Prettier
+- Export project as a ZIP file
+- Generate shareable links and embed codes
+- Multiple starter templates
+- Responsive and dark mode support
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v16 or higher recommended)
+- npm
+
+### Installation
+
+1. Clone the repository:
+   ```sh
+   git clone <repository-url>
+   cd "Code Editor"
+   ```
+
+2. Install dependencies:
+   ```sh
+   npm install
+   ```
+
+### Running the Development Server
+
+```sh
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173) in your browser to view the app.
+
+### Building for Production
+
+```sh
+npm run build
+```
+
+### Preview Production Build
+
+```sh
+npm run preview
+```
+
+## Project Structure
+
+```
+Code Editor/
+  ├── public/
+  ├── src/
+  │   ├── components/
+  │   ├── hooks/
+  │   ├── lib/
+  │   ├── pages/
+  │   ├── utils/
+  │   ├── App.jsx
+  │   ├── main.jsx
+  │   └── ...
+  ├── index.html
+  ├── package.json
+  └── ...
+```
+
+## Technologies Used
+
+- [React](https://react.dev/)
+- [Vite](https://vitejs.dev/)
+- [Prettier](https://prettier.io/) (via CDN)
+- [JSZip](https://stuk.github.io/jszip/) (via CDN)
+- [Radix UI](https://www.radix-ui.com/) components
