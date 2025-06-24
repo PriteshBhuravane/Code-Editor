@@ -11,7 +11,12 @@ export default defineConfig({
     },
   },
   server: {
-    host: "0.0.0.0",                    // Exposes the app to outside world (Render)
-    port: parseInt(process.env.PORT) || 5173, // Uses Render's PORT or defaults locally
+    host: "0.0.0.0",
+    port: parseInt(process.env.PORT) || 5173,
+  },
+  preview: {
+    host: "0.0.0.0",
+    port: parseInt(process.env.PORT) || 5173,
+    allowedHosts: ["code-editor-xw43.onrender.com"], // 👈 Add your Render host here
   },
 })
